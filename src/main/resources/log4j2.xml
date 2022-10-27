@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <!-- <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <appender name="mySplunk" class="com.splunk.logging.HttpEventCollectorLogbackAppender">
+        <url>http://127.0.0.1:8088</url>
+        <index>http_indexing</index>
+        <token>61862182-f7d4-4f7d-ac84-4b3ba10f9f6f</token>
+        <batch_size_count>10</batch_size_count>
+       <disableCertificateValidation>true</disableCertificateValidation>
+       <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+        <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter" />
+        <timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS Z</timestampFormat>
+        <appendLineSeparator>true</appendLineSeparator>
+    </layout>
+    </appender> -->
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%style{%d{ISO8601}} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{10}}{bright,yellow}: %msg%n%throwable" />
+        </Console>
+        <Socket name="socket" host="192.168.1.9" port="8088">
+            <PatternLayout pattern="%p: %m%n" charset="UTF-8"/>
+        </Socket>
+        <SplunkHttp
+                name="splunkhttp"
+                url="http://192.168.1.9:8088"
+                token="61862182-f7d4-4f7d-ac84-4b3ba10f9f6f"
+                host="localhost"
+                index="http_indexing"
+                type="raw"
+                source="http-event-logs"
+                sourcetype="log4j"
+                messageFormat="text"
+                disableCertificateValidation="true">
+            <PatternLayout pattern="%m" />
+        </SplunkHttp>
+
+    </Appenders>
+
+    <Loggers>
+        <!-- LOG everything at INFO level -->
+        <Root level="info">
+            <AppenderRef ref="console" />
+            <AppenderRef ref="splunkhttp" />
+        </Root>
+    </Loggers>
+</Configuration>
